@@ -66,65 +66,76 @@ public:
             }
         }
     }
+
     void removeNode(T deleteData)
     {
+        int remove;
+        treeNode *deleteNode;
 
-        //finde the removed leaf
-        NODE *deleteNode;
-        if (deleteData == nextNode[0]->data)
+        //find the deleteNode
+        if (deleteData <= data)
         {
+            remove = 0;
             deleteNode = nextNode[0];
         }
-        else // if(deleteData==nextNode[1]->data)
+        else
         {
+            remove = 1;
             deleteNode = nextNode[1];
         }
+
+        //delete Node
         if (deleteNode->nextNode[0] == nullptr && deleteNode->nextNode[1] == nullptr)
-        //don't have child
+        //have no child node
         {
             delete deleteNode;
-            deleteNode = nullptr;
+            nextNode[remove] = nullptr;
             return;
         }
-        if (deleteNode->nextNode[0] != nullptr && deleteNode->nextNode[1] != nullptr)
-        //have two child
+        else if (deleteNode->nextNode[0] != nullptr && deleteNode->nextNode[1] != nullptr)
+        //have two child node
         {
             if (deleteNode->nextNode[0]->nextNode[1] == nullptr)
-            // the left child have no right child
+            //don't have left child's right child
             {
                 deleteNode->data = deleteNode->nextNode[0]->data;
-                delete deleteNode->nextNode[0];
-                deleteNode->nextNode[0] = nullptr;
-                return;
+                deleteNode->removeNode(deleteNode->data);
             }
             else
-            //the left child have right child
+            //have left child's right child
             {
-                NODE *rightChild = deleteNode->findLeftLeaf()->parentNode;
-                deleteNode->data = rightChild->nextNode[1]->data;
-                if (rightChild->nextNode[1]->nextNode[0] == nullptr)
-                //have no left leaf
-                {
-                    delete rightChild->nextNode[1];
-                    rightChild->nextNode[1] = nullptr;
-                }
-                else
-                //have left leaf
-                {
-                    NODE *leftLeaf = rightChild->nextNode[1]->nextNode[0];
-                    delete rightChild->nextNode[1];
-                    rightChild->nextNode[1] = leftLeaf;
-                }
+                treeNode *finalNode = deleteNode->nextNode[0]->findRightLeaf();
+                deleteNode->data = finalNode->nextNode[1]->data;
+                finalNode->removeNode(finalNode->nextNode[1]->data);
             }
+            return;
+        }
+        else
+        // only have one child
+        {
+            if (deleteNode->nextNode[0] != nullptr)
+            //have left child
+            {
+                //deletNode->data = deletNode->nextNode[0]->data;
+                nextNode[remove] = deleteNode->nextNode[0];
+                // deleteNode->removeNode(deleteNode->nextNode[0]->data);
+            }
+            else
+            //have right child
+            {
+                nextNode[remove] = deleteNode->nextNode[1];
+            }
+            delete deleteNode;
         }
     }
+
     treeNode *findParent(T searchData)
     {
         if (searchData <= data)
         {
             if (nextNode[0] != nullptr)
             {
-                if (nextNode[0]->data = searchData)
+                if (nextNode[0]->data == searchData)
                 {
                     return this;
                 }
@@ -142,7 +153,7 @@ public:
         {
             if (nextNode[1] != nullptr)
             {
-                if (nextNode[1]->data = searchData)
+                if (nextNode[1]->data == searchData)
                 {
                     return this;
                 }
@@ -157,16 +168,13 @@ public:
             }
         }
     }
-    treeNode *findLeftLeaf()
+    treeNode *findRightLeaf()
     {
         if (nextNode[1]->nextNode[1] == nullptr)
         {
-            return nextNode;
+            return this;
         }
-        else
-        {
-            return findLeftLeaf();
-        }
+        return nextNode[1]->findRightLeaf();
     }
 
     void destroyNode()
@@ -221,7 +229,8 @@ public:
         case 'D':
             T deleteData;
             cin >> deleteData;
-            treeRoot->removeNode(deleteData);
+            //treeRoot->removeNode(deleteData);
+            remove(deleteData);
             break;
         case 'P':
             print();
@@ -242,7 +251,8 @@ public:
     {
         if (treeRoot == nullptr)
             return;
-        treeRoot->removeNode(deleteData);
+        NODE *targetNode = treeRoot->findParent(deleteData);
+        targetNode->removeNode(deleteData);
     }
     ~tree()
     {
@@ -256,7 +266,7 @@ public:
 
 private:
     NODE *treeRoot = nullptr;
-    T nodeList;
+    T nodeList = 0;
 };
 
 int main()
@@ -270,6 +280,11 @@ int main()
         cin >> initialValue;
         T.Insert(initialValue);
     }
-    T.print();
+    //T.print();
+    char command;
+    while (cin >> command)
+    {
+        T.begin(command);
+    }
     //T.begin()
 }
