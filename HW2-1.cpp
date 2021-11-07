@@ -70,27 +70,40 @@ public:
     {
 
         //finde the removed leaf
-        int removedNode;
+        NODE *deleteNode;
         if (deleteData == nextNode[0]->data)
         {
-            removedNode = 0;
+            deleteNode = nextNode[0];
         }
         else // if(deleteData==nextNode[1]->data)
         {
-            removedNode = 1;
+            deleteNode = nextNode[1];
         }
-        // else
-        // {
-        //     if(deleteData<data)
-        //     {
-        //         nextNode[0]->removeNode(deleteData);
-        //     }
-        //     else
-        //     {
-        //         nextNode[1]->removeNode(deleteData);
-        //     }
-        // }
+        if (deleteNode->nextNode[0] == nullptr && deleteNode->nextNode[1] == nullptr)
+        //don't have child
+        {
+            delete deleteNode;
+            deleteNode = nullptr;
+            return;
         }
+        if (deleteNode->nextNode[0] != nullptr && deleteNode->nextNode[1] != nullptr)
+        //have two child
+        {
+            if (deleteNode->nextNode[0]->nextNode[1] == nullptr)
+            // the left child have no right child
+            {
+                deleteNode->data = deleteNode->nextNode[0]->data;
+                delete deleteNode->nextNode[0];
+                deleteNode->nextNode[0] = nullptr;
+                return;
+            }
+            else
+            //the left child have right child
+            {
+                NODE *finalNode = deleteNode->findLeftLeaf();
+            }
+        }
+    }
     treeNode *findParent(T searchData)
     {
         if (searchData <= data)
