@@ -1,7 +1,9 @@
 #include <iostream>
-
+#include <algorithm>
+#define MAX 100000
 using namespace std;
 
+//BSTree
 template <typename T>
 class treeNode
 {
@@ -215,27 +217,9 @@ public:
         {
             treeRoot->add(inputData);
         }
-    }
-
-    void begin(char command)
-    {
-        switch (command)
-        {
-        case 'I':
-            T insertData;
-            cin >> insertData;
-            treeRoot->add(insertData);
-            break;
-        case 'D':
-            T deleteData;
-            cin >> deleteData;
-            //treeRoot->removeNode(deleteData);
-            remove(deleteData);
-            break;
-        case 'P':
-            print();
-            break;
-        }
+        //nodeList.push(inputData);
+        nodeList[cursor] = inputData;
+        cursor++;
     }
 
     void print()
@@ -253,7 +237,120 @@ public:
             return;
         NODE *targetNode = treeRoot->findParent(deleteData);
         targetNode->removeNode(deleteData);
+        int *p;
+        p = find(nodeList, nodeList + MAX, deleteData);
+        if (p != nodeList + MAX)
+        {
+            cursor++;
+            *p = 0;
+        }
+        //nodeList.pop(deleteData);
     }
+
+    int leastNode(int input)
+    {
+        //sort thd list
+        for (int i = 1; i < cursor; i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                if (nodeList[i] > nodeList[j])
+                {
+                    swap(nodeList[i], nodeList[j]);
+                }
+            }
+        }
+        T maximent = 0;
+        for (int i = 0; i < cursor; i++)
+        {
+            maximent += nodeList[i];
+        }
+        int count = 0;
+        for (count = 0; count < cursor; count++)
+        {
+            if (maximent - nodeList[count] <= input)
+            {
+                count++;
+                break;
+            }
+            maximent -= nodeList[count];
+        }
+        return count;
+    }
+
+    int maxNode(int input)
+    {
+        //sort list
+        for (int i = 1; i <= cursor; i++)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                if (nodeList[i] < nodeList[j])
+                {
+                    swap(nodeList[i], nodeList[j]);
+                    // T temp;
+                    // temp = nodeList[i]->data;
+                    // nodeList[i]->data = nodeList[j]->data;
+                    // nodeList[j]->data = temp;
+                }
+            }
+        }
+
+        //find the max node
+        T maximent = 0;
+        for (int i = 0; i < cursor; i++)
+        {
+            maximent += nodeList[i];
+        }
+        int count = 0;
+        for (count = 0; count <= cursor; count++)
+        {
+            if (maximent - nodeList[count] < input)
+            {
+                break;
+            }
+            maximent -= nodeList[count];
+        }
+        return count;
+    }
+
+    void begin(char command)
+    {
+        switch (command)
+        {
+        case 'I':
+            T insertData;
+            cin >> insertData;
+            Insert(insertData);
+            break;
+        case 'D':
+            T deleteData;
+            cin >> deleteData;
+            remove(deleteData);
+            break;
+        case 'P':
+            print();
+            break;
+        case 'L':
+            int leastNumber;
+            cin >> leastNumber;
+            //int leastNodeNumber;
+            //leastNodeNumber = leastNode(leastNumber);
+            printf("%d\n", leastNode(leastNumber));
+            //cout << leastNode(leastNumber);
+            break;
+        case 'M':
+            int mostNumber;
+            //int mostNodeNumber;
+            cin >> mostNumber;
+            // mostNodeNumber = maxNode(mostNumber);
+            printf("%d\n", leastNode(mostNumber));
+            //cout << maxNode(mostNumber);
+
+            break;
+        }
+    }
+
     ~tree()
     {
         if (treeRoot == nullptr)
@@ -266,7 +363,9 @@ public:
 
 private:
     NODE *treeRoot = nullptr;
-    T nodeList = 0;
+    //LinkList<T> nodeList;
+    int nodeList[MAX] = {0};
+    int cursor = 0;
 };
 
 int main()
@@ -286,5 +385,4 @@ int main()
     {
         T.begin(command);
     }
-    //T.begin()
 }
