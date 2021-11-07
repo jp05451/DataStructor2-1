@@ -100,7 +100,21 @@ public:
             else
             //the left child have right child
             {
-                NODE *finalNode = deleteNode->findLeftLeaf();
+                NODE *rightChild = deleteNode->findLeftLeaf()->parentNode;
+                deleteNode->data = rightChild->nextNode[1]->data;
+                if (rightChild->nextNode[1]->nextNode[0] == nullptr)
+                //have no left leaf
+                {
+                    delete rightChild->nextNode[1];
+                    rightChild->nextNode[1] = nullptr;
+                }
+                else
+                //have left leaf
+                {
+                    NODE *leftLeaf = rightChild->nextNode[1]->nextNode[0];
+                    delete rightChild->nextNode[1];
+                    rightChild->nextNode[1] = leftLeaf;
+                }
             }
         }
     }
@@ -147,7 +161,7 @@ public:
     {
         if (nextNode[1]->nextNode[1] == nullptr)
         {
-            return nextNode[1];
+            return nextNode;
         }
         else
         {
