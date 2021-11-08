@@ -1,10 +1,13 @@
 #include <iostream>
 #include <algorithm>
+#include <time.h>
+#include <stdio.h>
 #define MAX 100000
 using namespace std;
 
 //BSTree
-template <typename T>
+//template <typename T>
+typedef int T;
 class treeNode
 {
 public:
@@ -18,10 +21,6 @@ public:
         parentNode = parent;
         data = input;
     }
-    // ~treeNode()
-    // {
-    //     //destroyNode();
-    // }
 
     void printNode()
     {
@@ -200,10 +199,11 @@ public:
     }
 };
 
-template <typename T>
+//template <typename T>
+typedef int T;
 class tree
 {
-    typedef treeNode<T> NODE;
+    typedef treeNode NODE;
 
 public:
     void Insert(T inputData)
@@ -316,36 +316,35 @@ public:
 
     void begin(char command)
     {
+        int input;
         switch (command)
         {
         case 'I':
-            T insertData;
-            cin >> insertData;
-            Insert(insertData);
+            //T insertData;
+            //cin >> input;
+            scanf("%d", &input);
+            Insert(input);
             break;
         case 'D':
-            T deleteData;
-            cin >> deleteData;
-            remove(deleteData);
+            //T deleteData;
+            //cin >> input;
+            scanf("%d", &input);
+            remove(input);
             break;
         case 'P':
             print();
             break;
         case 'L':
-            int leastNumber;
-            cin >> leastNumber;
-            //int leastNodeNumber;
-            //leastNodeNumber = leastNode(leastNumber);
-            printf("%d\n", leastNode(leastNumber));
-            //cout << leastNode(leastNumber);
+            //int leastNumber;
+            //cin >> leastNumber;
+            scanf("%d", &input);
+            printf("%d\n", leastNode(input));
             break;
         case 'M':
-            int mostNumber;
-            //int mostNodeNumber;
-            cin >> mostNumber;
-            // mostNodeNumber = maxNode(mostNumber);
-            printf("%d\n", leastNode(mostNumber));
-            //cout << maxNode(mostNumber);
+            // int mostNumber;
+            // cin >> mostNumber;
+            scanf("%d", &input);
+            printf("%d\n", leastNode(input));
 
             break;
         }
@@ -372,17 +371,22 @@ int main()
 {
     int times;
     int initialValue;
-    tree<int> T;
-    cin >> times;
+    tree T;
+    //cin >> times;
+    scanf("%d", &times);
     for (int i = 0; i < times; i++)
     {
-        cin >> initialValue;
+        //cin >> initialValue;
+        scanf("%d", &initialValue);
         T.Insert(initialValue);
     }
     //T.print();
-    char command;
-    while (cin >> command)
+    char command='\0';
+    //while (cin >> command)
+    while (scanf("%c", &command) != EOF)
     {
         T.begin(command);
+        //cout << (double)clock() / CLOCKS_PER_SEC * 1000 << "mS" << endl;
+        //command = '\0';
     }
 }
