@@ -1,9 +1,14 @@
+#include <sstream>
 #include <iostream>
 #include <algorithm>
-#include <time.h>
 #include <stdio.h>
+
 #define MAX 100000
 using namespace std;
+
+//string in = {"7 39 27 45 18 29 40 54 P I 21 I 46 P D 27 P D 45 P D 40 P"};
+
+//stringstream ss;
 
 //BSTree
 //template <typename T>
@@ -24,47 +29,84 @@ public:
 
     void printNode()
     {
-        cout << data;
-        cout << "(";
+        // cout << data;
+        // cout << "(";
+        printf("%d(", data);
         if (nextNode[0] != nullptr)
         {
             nextNode[0]->printNode();
         }
-        cout << ")(";
+        //cout << ")(";
+        printf(")(");
         if (nextNode[1] != nullptr)
         {
             nextNode[1]->printNode();
         }
-        cout << ")";
+        //cout << ")";
+        printf(")");
     }
 
-    void add(T input)
+    // void add(T input)
+    // {
+    //     if (input <= data)
+    //     {
+    //         if (nextNode[0] == nullptr)
+    //         {
+    //             treeNode *newNode = new treeNode(this, input);
+    //             nextNode[0] = newNode;
+    //         }
+    //         else
+    //         {
+    //             nextNode[0]->add(input);
+    //         }
+    //         return;
+    //     }
+    //     if (input > data)
+    //     {
+    //         if (nextNode[1] == nullptr)
+    //         {
+    //             treeNode *newNode = new treeNode(this, input);
+    //             nextNode[1] = newNode;
+    //             return;
+    //         }
+    //         else
+    //         {
+    //             nextNode[1]->add(input);
+    //         }
+    //     }
+    // }
+
+    void add(T inputData)
     {
-        if (input <= data)
+        treeNode *preNode = this;
+        treeNode *lastNode = this;
+        //while (lastNode != nullptr)
+        while (1)
         {
-            if (nextNode[0] == nullptr)
+            if (inputData <= preNode->data)
             {
-                treeNode *newNode = new treeNode(this, input);
-                nextNode[0] = newNode;
+                lastNode = preNode->nextNode[0];
             }
             else
             {
-                nextNode[0]->add(input);
+                lastNode = preNode->nextNode[1];
             }
-            return;
+            if (lastNode == nullptr)
+            {
+                break;
+            }
+            else
+            {
+                preNode = lastNode;
+            }
         }
-        if (input > data)
+        if (inputData <= preNode->data)
         {
-            if (nextNode[1] == nullptr)
-            {
-                treeNode *newNode = new treeNode(this, input);
-                nextNode[1] = newNode;
-                return;
-            }
-            else
-            {
-                nextNode[1]->add(input);
-            }
+            preNode->nextNode[0] = new treeNode(preNode, inputData);
+        }
+        else
+        {
+            preNode->nextNode[1] = new treeNode(preNode, inputData);
         }
     }
 
@@ -169,6 +211,7 @@ public:
             }
         }
     }
+
     treeNode *findRightLeaf()
     {
         if (nextNode[1]->nextNode[1] == nullptr)
@@ -177,6 +220,16 @@ public:
         }
         return nextNode[1]->findRightLeaf();
     }
+
+    // treeNode *findRightLeaf()
+    // {
+    //     treeNode *tempNode = this;
+    //     while (tempNode->nextNode[1]->nextNode[1] != nullptr)
+    //     {
+    //         tempNode = nextNode[1];
+    //     }
+    //     return tempNode;
+    // }
 
     void destroyNode()
     {
@@ -219,6 +272,8 @@ public:
         }
         //nodeList.push(inputData);
         nodeList[cursor] = inputData;
+        sorting = 1;
+        maximent += inputData;
         cursor++;
     }
 
@@ -241,75 +296,146 @@ public:
         p = find(nodeList, nodeList + MAX, deleteData);
         if (p != nodeList + MAX)
         {
-            cursor++;
+            cursor--;
+            maximent -= deleteData;
             *p = 0;
+            swap(*p, nodeList[cursor]);
         }
         //nodeList.pop(deleteData);
     }
 
     int leastNode(int input)
     {
+
         //sort thd list
-        for (int i = 1; i < cursor; i++)
+        //power down
+        if (sorting)
         {
-            for (int j = 0; j < i; j++)
+            for (int i = 1; i < cursor; i++)
             {
-                if (nodeList[i] > nodeList[j])
+                for (int j = 0; j < i; j++)
                 {
-                    swap(nodeList[i], nodeList[j]);
+                    if (nodeList[i] > nodeList[j])
+                    {
+                        //swap(nodeList[i], nodeList[j]);
+                        T temp;
+                        temp = nodeList[i];
+                        nodeList[i] = nodeList[j];
+                        nodeList[j] = temp;
+                    }
                 }
             }
+            sorting = 0;
+            sortWay = 1; //power down
         }
-        T maximent = 0;
-        for (int i = 0; i < cursor; i++)
+
+        //revert
+        if (!sortWay)
         {
-            maximent += nodeList[i];
+            for (int i = 0; i < cursor / 2; i++)
+            {
+                int temp;
+                temp = nodeList[i];
+                nodeList[i] = nodeList[cursor - 1 - i];
+                nodeList[cursor - 1 - i] = temp;
+            }
+            sortWay = 1;
         }
+
+        //input too big
+        if (input > maximent)
+        {
+            return 0;
+        }
+
+        //special case
+        if (input <= nodeList[cursor - 1])
+        {
+            if (input < nodeList[cursor - 1])
+                return cursor - 1;
+            else
+                return cursor - 1;
+        }
+
+        int temp = maximent;
         int count = 0;
+
         for (count = 0; count < cursor; count++)
         {
-            if (maximent - nodeList[count] <= input)
+            if (temp - nodeList[count] <= input)
             {
                 count++;
                 break;
             }
-            maximent -= nodeList[count];
+            temp -= nodeList[count];
         }
         return count;
     }
 
     int maxNode(int input)
     {
+
         //sort list
-        for (int i = 1; i <= cursor; i++)
+        //power up
+        if (sorting)
         {
-            for (int j = 0; j < i; j++)
+            for (int i = 1; i < cursor; i++)
             {
-                if (nodeList[i] < nodeList[j])
+                for (int j = 0; j < i; j++)
                 {
-                    swap(nodeList[i], nodeList[j]);
-                    // T temp;
-                    // temp = nodeList[i]->data;
-                    // nodeList[i]->data = nodeList[j]->data;
-                    // nodeList[j]->data = temp;
+                    if (nodeList[i] < nodeList[j])
+                    {
+                        //swap(nodeList[i], nodeList[j]);
+                        T temp;
+                        temp = nodeList[i];
+                        nodeList[i] = nodeList[j];
+                        nodeList[j] = temp;
+                    }
                 }
             }
+            sorting = 0;
+            sortWay = 0; //power up
+        }
+
+        //revert
+        if (sortWay)
+        {
+            for (int i = 0; i < cursor / 2; i++)
+            {
+                int temp;
+                temp = nodeList[i];
+                nodeList[i] = nodeList[cursor - 1 - i];
+                nodeList[cursor - 1 - i] = temp;
+            }
+            sortWay = 0;
+        }
+
+        //input too big
+        if (input > maximent)
+        {
+            return 0;
+        }
+
+        //special case
+        if (input <= nodeList[0])
+        {
+            if (input < nodeList[0])
+                return cursor - 1;
+            else
+                return cursor - 2;
         }
 
         //find the max node
-        T maximent = 0;
-        for (int i = 0; i < cursor; i++)
-        {
-            maximent += nodeList[i];
-        }
         int count = 0;
-        for (count = 0; count <= cursor; count++)
+        int temp = maximent;
+        for (count = 0; count < cursor; count++)
         {
-            if (maximent - nodeList[count] < input)
+            if (temp - nodeList[count] < input)
             {
+                //count++;
                 break;
             }
-            maximent -= nodeList[count];
+            temp -= nodeList[count];
         }
         return count;
     }
@@ -320,32 +446,28 @@ public:
         switch (command)
         {
         case 'I':
-            //T insertData;
-            //cin >> input;
-            scanf("%d", &input);
+            cin >> input;
+            //scanf("%d", &input);
             Insert(input);
             break;
         case 'D':
-            //T deleteData;
-            //cin >> input;
-            scanf("%d", &input);
+            cin >> input;
+            // scanf("%d", &input);
             remove(input);
             break;
         case 'P':
             print();
             break;
         case 'L':
-            //int leastNumber;
-            //cin >> leastNumber;
-            scanf("%d", &input);
+            cin >> input;
+            //scanf("%d", &input);
             printf("%d\n", leastNode(input));
             break;
         case 'M':
-            // int mostNumber;
-            // cin >> mostNumber;
-            scanf("%d", &input);
-            printf("%d\n", leastNode(input));
-
+            cin >> input;
+            //scanf("%d", &input);
+            printf("%d\n", maxNode(input));
+            //cout << sortWay << endl;
             break;
         }
     }
@@ -362,31 +484,31 @@ public:
 
 private:
     NODE *treeRoot = nullptr;
-    //LinkList<T> nodeList;
+    bool sorting = 1; //need to sort
+    bool sortWay = 0; //0 = power up; 1 = power down
+
+    int maximent = 0;
     int nodeList[MAX] = {0};
     int cursor = 0;
 };
 
 int main()
 {
+
     int times;
     int initialValue;
+    //ss << in;
     tree T;
-    //cin >> times;
-    scanf("%d", &times);
+    //ss >> times;
+    cin >> times;
     for (int i = 0; i < times; i++)
     {
-        //cin >> initialValue;
-        scanf("%d", &initialValue);
+        cin >> initialValue;
         T.Insert(initialValue);
     }
-    //T.print();
-    char command='\0';
-    //while (cin >> command)
-    while (scanf("%c", &command) != EOF)
+    char command = '\0';
+    while (cin >> command)
     {
         T.begin(command);
-        //cout << (double)clock() / CLOCKS_PER_SEC * 1000 << "mS" << endl;
-        //command = '\0';
     }
 }
