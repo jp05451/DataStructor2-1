@@ -6,10 +6,6 @@
 #define MAX 100000
 using namespace std;
 
-//string in = {"7 39 27 45 18 29 40 54 P I 21 I 46 P D 27 P D 45 P D 40 P"};
-
-//stringstream ss;
-
 //BSTree
 //template <typename T>
 typedef int T;
@@ -17,7 +13,7 @@ class treeNode
 {
 public:
     treeNode *parentNode = nullptr;
-    T data;
+    I data;
     treeNode *nextNode[2] = {nullptr};
 
     treeNode(T inputData) { data = inputData; }
@@ -81,7 +77,7 @@ public:
         treeNode *preNode = this;
         treeNode *lastNode = this;
         //while (lastNode != nullptr)
-        while (1)
+        while (lastNode != nullptr)
         {
             if (inputData <= preNode->data)
             {
@@ -109,6 +105,68 @@ public:
             preNode->nextNode[1] = new treeNode(preNode, inputData);
         }
     }
+
+    // void removeNode(T deleteData)
+    // {
+    //     int remove;
+    //     treeNode *deleteNode;
+
+    //     //find the deleteNode
+    //     if (deleteData <= data)
+    //     {
+    //         remove = 0;
+    //         deleteNode = nextNode[0];
+    //     }
+    //     else
+    //     {
+    //         remove = 1;
+    //         deleteNode = nextNode[1];
+    //     }
+
+    //     //delete Node
+    //     if (deleteNode->nextNode[0] == nullptr && deleteNode->nextNode[1] == nullptr)
+    //     //have no child node
+    //     {
+    //         delete deleteNode;
+    //         nextNode[remove] = nullptr;
+    //         return;
+    //     }
+    //     else if (deleteNode->nextNode[0] != nullptr && deleteNode->nextNode[1] != nullptr)
+    //     //have two child node
+    //     {
+    //         if (deleteNode->nextNode[0]->nextNode[1] == nullptr)
+    //         //don't have left child's right child
+    //         {
+    //             deleteNode->data = deleteNode->nextNode[0]->data;
+    //             deleteNode->removeNode(deleteNode->data);
+    //         }
+    //         else
+    //         //have left child's right child
+    //         {
+    //             treeNode *finalNode = deleteNode->nextNode[0]->findRightLeaf();
+    //             deleteNode->data = finalNode->nextNode[1]->data;
+    //             finalNode->removeNode(finalNode->nextNode[1]->data);
+    //         }
+    //         return;
+    //     }
+    //     else
+    //     // only have one child
+    //     {
+    //         if (deleteNode->nextNode[0] != nullptr)
+    //         //have left child
+    //         {
+    //             //deletNode->data = deletNode->nextNode[0]->data;
+    //             nextNode[remove] = deleteNode->nextNode[0];
+    //             // deleteNode->removeNode(deleteNode->nextNode[0]->data);
+    //         }
+    //         else
+    //         //have right child
+    //         {
+    //             nextNode[remove] = deleteNode->nextNode[1];
+    //         }
+    //         delete deleteNode;
+    //     }
+    // }
 
     void removeNode(T deleteData)
     {
@@ -172,64 +230,108 @@ public:
         }
     }
 
+    // treeNode *findParent(T searchData)
+    // {
+    //     if (searchData <= data)
+    //     {
+    //         if (nextNode[0] != nullptr)
+    //         {
+    //             if (nextNode[0]->data == searchData)
+    //             {
+    //                 return this;
+    //             }
+    //             else
+    //             {
+    //                 return nextNode[0]->findParent(searchData);
+    //             }
+    //         }
+    //         else
+    //         {
+    //             return nullptr;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         if (nextNode[1] != nullptr)
+    //         {
+    //             if (nextNode[1]->data == searchData)
+    //             {
+    //                 return this;
+    //             }
+    //             else
+    //             {
+    //                 return nextNode[1]->findParent(searchData);
+    //             }
+    //         }
+    //         else
+    //         {
+    //             return nullptr;
+    //         }
+    //     }
+    // }
+
     treeNode *findParent(T searchData)
     {
-        if (searchData <= data)
+        treeNode *tempNode = this;
+        while (tempNode != nullptr)
         {
-            if (nextNode[0] != nullptr)
+            if (searchData <= tempNode->data)
             {
-                if (nextNode[0]->data == searchData)
+                if (tempNode->nextNode[0] != nullptr)
                 {
-                    return this;
+                    if (tempNode->nextNode[0]->data == searchData)
+                    {
+                        return tempNode;
+                    }
+                    else
+                    {
+                        tempNode = tempNode->nextNode[0];
+                    }
                 }
                 else
                 {
-                    return nextNode[0]->findParent(searchData);
+                    return nullptr;
                 }
             }
             else
             {
-                return nullptr;
-            }
-        }
-        else
-        {
-            if (nextNode[1] != nullptr)
-            {
-                if (nextNode[1]->data == searchData)
+                if (tempNode->nextNode[1] != nullptr)
                 {
-                    return this;
+                    if (tempNode->nextNode[1]->data == searchData)
+                    {
+                        return tempNode;
+                    }
+                    else
+                    {
+                        tempNode = tempNode->nextNode[1];
+                    }
                 }
                 else
                 {
-                    return nextNode[1]->findParent(searchData);
+                    return nullptr;
                 }
             }
-            else
-            {
-                return nullptr;
-            }
         }
-    }
-
-    treeNode *findRightLeaf()
-    {
-        if (nextNode[1]->nextNode[1] == nullptr)
-        {
-            return this;
-        }
-        return nextNode[1]->findRightLeaf();
     }
 
     // treeNode *findRightLeaf()
     // {
-    //     treeNode *tempNode = this;
-    //     while (tempNode->nextNode[1]->nextNode[1] != nullptr)
+    //     if (nextNode[1]->nextNode[1] == nullptr)
     //     {
-    //         tempNode = nextNode[1];
+    //         return this;
     //     }
-    //     return tempNode;
+    //     return nextNode[1]->findRightLeaf();
     // }
+
+    treeNode *findRightLeaf()
+    {
+        treeNode *tempNode = this;
+        while (tempNode->nextNode[1]->nextNode[1] != nullptr)
+        {
+            tempNode = tempNode->nextNode[1];
+        }
+        return tempNode;
+    }
 
     void destroyNode()
     {
@@ -253,13 +355,13 @@ public:
 };
 
 //template <typename T>
-typedef int T;
+typedef int I;
 class tree
 {
     typedef treeNode NODE;
 
 public:
-    void Insert(T inputData)
+    void Insert(I inputData)
     {
         if (treeRoot == nullptr)
         {
@@ -286,7 +388,7 @@ public:
         cout << endl;
     }
 
-    void remove(T deleteData)
+    void remove(I deleteData)
     {
         if (treeRoot == nullptr)
             return;
@@ -318,7 +420,7 @@ public:
                     if (nodeList[i] > nodeList[j])
                     {
                         //swap(nodeList[i], nodeList[j]);
-                        T temp;
+                        I temp;
                         temp = nodeList[i];
                         nodeList[i] = nodeList[j];
                         nodeList[j] = temp;
@@ -386,7 +488,7 @@ public:
                     if (nodeList[i] < nodeList[j])
                     {
                         //swap(nodeList[i], nodeList[j]);
-                        T temp;
+                        I temp;
                         temp = nodeList[i];
                         nodeList[i] = nodeList[j];
                         nodeList[j] = temp;
