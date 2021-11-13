@@ -13,7 +13,7 @@ class treeNode
 {
 public:
     treeNode *parentNode = nullptr;
-    I data;
+    T data;
     treeNode *nextNode[2] = {nullptr};
 
     treeNode(T inputData) { data = inputData; }
@@ -393,6 +393,8 @@ public:
         if (treeRoot == nullptr)
             return;
         NODE *targetNode = treeRoot->findParent(deleteData);
+        if (targetNode==nullptr)
+            return;
         targetNode->removeNode(deleteData);
         int *p;
         p = find(nodeList, nodeList + MAX, deleteData);
@@ -402,6 +404,7 @@ public:
             maximent -= deleteData;
             *p = 0;
             swap(*p, nodeList[cursor]);
+            sorting = 0;
         }
         //nodeList.pop(deleteData);
     }
@@ -413,20 +416,21 @@ public:
         //power down
         if (sorting)
         {
-            for (int i = 1; i < cursor; i++)
-            {
-                for (int j = 0; j < i; j++)
-                {
-                    if (nodeList[i] > nodeList[j])
-                    {
-                        //swap(nodeList[i], nodeList[j]);
-                        I temp;
-                        temp = nodeList[i];
-                        nodeList[i] = nodeList[j];
-                        nodeList[j] = temp;
-                    }
-                }
-            }
+            // for (int i = 1; i < cursor; i++)
+            // {
+            //     for (int j = 0; j < i; j++)
+            //     {
+            //         if (nodeList[i] > nodeList[j])
+            //         {
+            //             //swap(nodeList[i], nodeList[j]);
+            //             I temp;
+            //             temp = nodeList[i];
+            //             nodeList[i] = nodeList[j];
+            //             nodeList[j] = temp;
+            //         }
+            //     }
+            // }
+            sort(nodeList, nodeList + cursor,greater<int>());
             sorting = 0;
             sortWay = 1; //power down
         }
@@ -481,22 +485,23 @@ public:
         //power up
         if (sorting)
         {
-            for (int i = 1; i < cursor; i++)
-            {
-                for (int j = 0; j < i; j++)
-                {
-                    if (nodeList[i] < nodeList[j])
-                    {
-                        //swap(nodeList[i], nodeList[j]);
-                        I temp;
-                        temp = nodeList[i];
-                        nodeList[i] = nodeList[j];
-                        nodeList[j] = temp;
-                    }
-                }
-            }
-            sorting = 0;
-            sortWay = 0; //power up
+        //     for (int i = 1; i < cursor; i++)
+        //     {
+        //         for (int j = 0; j < i; j++)
+        //         {
+        //             if (nodeList[i] < nodeList[j])
+        //             {
+        //                 //swap(nodeList[i], nodeList[j]);
+        //                 I temp;
+        //                 temp = nodeList[i];
+        //                 nodeList[i] = nodeList[j];
+        //                 nodeList[j] = temp;
+        //             }
+        //         }
+        //     }
+        sort(nodeList, nodeList + cursor);
+        sorting = 0;
+        sortWay = 0; //power up
         }
 
         //revert
